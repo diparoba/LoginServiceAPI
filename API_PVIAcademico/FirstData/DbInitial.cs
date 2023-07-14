@@ -25,7 +25,14 @@ namespace API_PVIAcademico.FirstData
                 new Models.Role
                 {
                     Id= 2,
-                    Description = "Client",
+                    Description = "Student",
+                    Status = "A",
+                    Add = DateTime.Now
+                },
+                new Models.Role
+                {
+                    Id= 3,
+                    Description = "Import",
                     Status = "A",
                     Add = DateTime.Now
                 }

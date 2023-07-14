@@ -2,8 +2,11 @@ using API_PVIAcademico.Connection;
 using API_PVIAcademico.FirstData;
 using API_PVIAcademico.Services;
 using API_PVIAcademico.Utilities;
+using Azure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph;
+using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +40,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
         };
     });
+
+// Azure Active Directory B2C Configuration
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+
+// User Sync Configuration
+builder.Services.AddHostedService<UserSyncService>();
+// Register GraphServiceClient
+builder.Services.AddSingleton(provider =>
+{
+    var clientId = builder.Configuration["AzureAd:ClientId"];
+    var clientSecret = builder.Configuration["AzureAd:ClientSecret"];
+    var tenantId = builder.Configuration["AzureAd:TenantId"];
+    var clientSecretCredential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+    return new GraphServiceClient(clientSecretCredential);
+});
 
 //Active Services
 builder.Services.AddScoped<IServiceAuth, ServiceAuth>();

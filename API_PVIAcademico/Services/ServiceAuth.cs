@@ -50,7 +50,7 @@ namespace API_PVIAcademico.Services
         }
         public async Task<User> Login(AuthResponse user)
         {
-           User userInfo = await authUser(user.UserName, user.Password);
+           User userInfo = await authUser(user.Username, user.Password);
             if (userInfo == null)
             {
                 return null;
